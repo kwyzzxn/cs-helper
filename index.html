@@ -1,24 +1,71 @@
-[
-  {
-    "category": "充值问题",
-    "subCategories": [
-      {
-        "name": "无法充值",
-        "response": "1. 无法充值：请检查网络连接或更换支付方式..."
-      },
-      {
-        "name": "充值不到账",
-        "response": "2. 充值不到账：请联系客服提供订单号查询..."
-      }
-    ]
-  },
-  {
-    "category": "登录问题", 
-    "subCategories": [
-      {
-        "name": "账号无法登录",
-        "response": "建议您尝试重置密码..."
-      }
-    ]
-  }
-]
+<!DOCTYPE html>
+<html>
+<head>
+    <title>客服话术助手</title>
+    <style>
+        #subCategory { margin-top: 10px; display: none; }
+    </style>
+</head>
+<body>
+    <h1>客服话术助手</h1>
+    
+    <!-- 主分类选择 -->
+    <select id="category">
+        <option value="">请选择主分类</option>
+    </select>
+
+    <!-- 子分类选择 -->
+    <select id="subCategory">
+        <option value="">请选择子分类</option>
+    </select>
+
+    <!-- 显示话术 -->
+    <div id="response"></div>
+
+    <script>
+        // 加载 JSON 数据
+        async function init() {
+            const response = await fetch('data.json');
+            const data = await response.json();
+            const mainSelect = document.getElementById('category');
+            const subSelect = document.getElementById('subCategory');
+            const responseDiv = document.getElementById('response');
+
+            // 生成主分类选项
+            data.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.category;
+                option.textContent = item.category;
+                mainSelect.appendChild(option);
+            });
+
+            // 主分类变化时更新子分类
+            mainSelect.addEventListener('change', (e) => {
+                const selectedCategory = data.find(item => item.category === e.target.value);
+                subSelect.style.display = selectedCategory ? 'block' : 'none';
+                responseDiv.innerHTML = ''; // 清空话术
+
+                if (selectedCategory) {
+                    // 清空旧子分类选项
+                    subSelect.innerHTML = '<option value="">请选择子分类</option>';
+                    selectedCategory.subCategories.forEach(sub => {
+                        const subOption = document.createElement('option');
+                        subOption.value = sub.name;
+                        subOption.textContent = sub.name;
+                        subSelect.appendChild(subOption);
+                    });
+                }
+            });
+
+            // 子分类变化时显示话术
+            subSelect.addEventListener('change', (e) => {
+                const selectedSub = data.find(item => item.category === mainSelect.value)
+                    ?.subCategories.find(sub => sub.name === e.target.value);
+                responseDiv.innerHTML = selectedSub ? selectedSub.response : '';
+            });
+        }
+
+        init();
+    </script>
+</body>
+</html>
