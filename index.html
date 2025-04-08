@@ -5,7 +5,7 @@
     <style>
         body { font-family: Arial; padding: 20px; }
         select { margin: 10px 0; padding: 5px; display: none; }
-        #response { margin-top: 20px; padding: 15px; border: 1px solid #ddd; background: #f9f9f9; }
+        #response { margin-top: 20px; padding: 15px; border: 1px solid #ddd; }
     </style>
 </head>
 <body>
@@ -23,67 +23,73 @@
 
     <script>
         async function init() {
-            const response = await fetch('data.json');
-            const data = await response.json();
-            const mainSelect = document.getElementById('mainCategory');
-            const subSelect = document.getElementById('subCategory');
-            const subSubSelect = document.getElementById('subSubCategory');
-            const responseDiv = document.getElementById('response');
+            try {
+                const response = await fetch('data.json');
+                const data = await response.json();
+                const mainSelect = document.getElementById('mainCategory');
+                const subSelect = document.getElementById('subCategory');
+                const subSubSelect = document.getElementById('subSubCategory');
+                const responseDiv = document.getElementById('response');
 
-            // 初始化主分类
-            data.forEach(category => {
-                const option = document.createElement('option');
-                option.value = category.category;
-                option.textContent = category.category;
-                mainSelect.appendChild(option);
-            });
+                // 初始化主分类
+                data.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category.category;
+                    option.textContent = category.category;
+                    mainSelect.appendChild(option);
+                });
+                mainSelect.style.display = 'block';
 
-            // 主分类变化时更新子分类
-            mainSelect.addEventListener('change', () => {
-                const category = data.find(item => item.category === mainSelect.value);
-                subSelect.style.display = category ? 'block' : 'none';
-                subSelect.innerHTML = '<option value="">请选择子分类</option>';
-                subSubSelect.style.display = 'none';
-                subSubSelect.innerHTML = '<option value="">请选择具体平台</option>';
-                responseDiv.innerHTML = '';
+                // 主分类变化逻辑
+                mainSelect.addEventListener('change', () => {
+                    const category = data.find(item => item.category === mainSelect.value);
+                    subSelect.style.display = category ? 'block' : 'none';
+                    subSelect.innerHTML = '<option value="">请选择子分类</option>';
+                    subSubSelect.style.display = 'none';
+                    responseDiv.innerHTML = '';
 
-                if (category) {
-                    category.subCategories.forEach(sub => {
-                        const option = document.createElement('option');
-                        option.value = sub.name;
-                        option.textContent = sub.name;
-                        subSelect.appendChild(option);
-                    });
-                }
-            });
+                    if (category) {
+                        category.subCategories.forEach(sub => {
+                            const option = document.createElement('option');
+                            option.value = sub.name;
+                            option.textContent = sub.name;
+                            subSelect.appendChild(option);
+                        });
+                    }
+                });
 
-            // 子分类变化时更新二级子分类
-            subSelect.addEventListener('change', () => {
-                const mainCategory = data.find(item => item.category === mainSelect.value);
-                const subCategory = mainCategory.subCategories.find(sub => sub.name === subSelect.value);
-                subSubSelect.style.display = subCategory?.children ? 'block' : 'none';
-                subSubSelect.innerHTML = '<option value="">请选择具体平台</option>';
-                responseDiv.innerHTML = '';
+                // 子分类变化逻辑
+                subSelect.addEventListener('change', () => {
+                    const mainCat = data.find(item => item.category === mainSelect.value);
+                    const subCat = mainCat.subCategories.find(sub => sub.name === subSelect.value);
+                    subSubSelect.style.display = subCat?.children ? 'block' : 'none';
+                    subSubSelect.innerHTML = '<option value="">请选择具体平台</option>';
+                    responseDiv.innerHTML = '';
 
-                if (subCategory?.children) {
-                    subCategory.children.forEach(child => {
-                        const option = document.createElement('option');
-                        option.value = child.name;
-                        option.textContent = child.name;
-                        subSubSelect.appendChild(option);
-                    });
-                } else if (subCategory?.response) {
-                    responseDiv.innerHTML = subCategory.response;
-                }
-            });
+                    if (subCat?.children) {
+                        subCat.children.forEach(child => {
+                            const option = document.createElement('option');
+                            option.value = child.name;
+                            option.textContent = child.name;
+                            subSubSelect.appendChild(option);
+                        });
+                    } else if (subCat?.response) {
+                        responseDiv.innerHTML = subCat.response;
+                    }
+                });
 
-            // 二级子分类变化时显示话术
-            subSubSelect.addEventListener('change', () => {
-                const mainCategory = data.find(item => item.category === mainSelect.value);
-                const subCategory = mainCategory.subCategories.find(sub => sub.name === subSelect.value);
-                const subSubCategory = subCategory.children?.find(child => child.name === subSubSelect.value);
-                responseDiv.innerHTML = subSubCategory ? subSubCategory.response : '';
-            });
+                // 二级子分类变化逻辑
+                subSubSelect.addEventListener('change', () => {
+                    const mainCat = data.find(item => item.category === mainSelect.value);
+                    const subCat = mainCat.subCategories.find(sub => sub.name === subSelect.value);
+                    const subSubCat = subCat.children.find(child => child.name === subSubSelect.value);
+                    responseDiv.innerHTML = subSubCat?.response || '';
+                });
+
+            } catch (error) {
+                console.error('加载失败:', error);
+                alert('数据加载失败，请检查JSON文件路径和格式！');
+            }
         }
 
         init();
