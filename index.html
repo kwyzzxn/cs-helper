@@ -41,11 +41,7 @@
 </head>
 <body>
     <h1>客服话术助手</h1>
-    
-    <!-- 搜索框 -->
     <input type="text" id="search" placeholder="输入关键词搜索（如“充值”）">
-
-    <!-- 分类选择器 -->
     <select id="mainCategory">
         <option value="">请选择主分类</option>
     </select>
@@ -53,10 +49,8 @@
         <option value="">请选择子分类</option>
     </select>
     <select id="subSubCategory">
-        <option value="">请选择具体平台</option>
+        <option value="">请选择平台</option>
     </select>
-
-    <!-- 话术显示区域 -->
     <div id="response"></div>
 
     <script>
@@ -74,13 +68,13 @@
             const results = [];
             data.forEach(category => {
                 category.subCategories.forEach(sub => {
-                    if (sub.children) {
-                        sub.children.forEach(child => {
+                    if (sub.subCategories) {
+                        sub.subCategories.forEach(child => {
                             if (child.response.toLowerCase().includes(keyword)) {
                                 results.push(`<p><strong>${category.category} → ${sub.name} → ${child.name}:</strong> ${child.response}</p>`);
                             }
                         });
-                    } else if (sub.response.toLowerCase().includes(keyword)) {
+                    } else if (sub.response && sub.response.toLowerCase().includes(keyword)) {
                         results.push(`<p><strong>${category.category} → ${sub.name}:</strong> ${sub.response}</p>`);
                     }
                 });
@@ -129,19 +123,19 @@
                 subSelect.addEventListener('change', () => {
                     const mainCat = data.find(item => item.category === mainSelect.value);
                     const subCat = mainCat.subCategories.find(sub => sub.name === subSelect.value);
-                    subSubSelect.style.display = subCat?.children ? 'block' : 'none';
+                    subSubSelect.style.display = subCat.subCategories ? 'block' : 'none';
                     subSubSelect.innerHTML = '<option value="">请选择平台</option>';
                     responseDiv.innerHTML = '';
 
-                    if (subCat?.children) {
-                        subCat.children.forEach(child => {
+                    if (subCat.subCategories) {
+                        subCat.subCategories.forEach(child => {
                             const option = document.createElement('option');
                             option.value = child.name;
                             option.textContent = child.name;
                             subSubSelect.appendChild(option);
                         });
-                    } else if (subCat?.response) {
-                      responseDiv.innerHTML = subCat.response;
+                    } else if (subCat.response) {
+                        responseDiv.innerHTML = subCat.response;
                     }
                 });
 
@@ -149,8 +143,8 @@
                 subSubSelect.addEventListener('change', () => {
                     const mainCat = data.find(item => item.category === mainSelect.value);
                     const subCat = mainCat.subCategories.find(sub => sub.name === subSelect.value);
-                    const subSubCat = subCat.children.find(child => child.name === subSubSelect.value);
-                    responseDiv.innerHTML = subSubCat?.response || '';
+                    const subSubCat = subCat.subCategories.find(child => child.name === subSubSelect.value);
+                    responseDiv.innerHTML = subSubCat.response;
                 });
 
             } catch (error) {
