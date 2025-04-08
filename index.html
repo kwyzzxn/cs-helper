@@ -1,88 +1,24 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>客服话术助手（二级菜单）</title>
-    <style>
-        /* 基础样式 */
-        body { font-family: Arial; padding: 20px; }
-        .menu { margin: 10px 0; }
-        #response { margin-top: 20px; padding: 10px; border: 1px solid #ccc; }
-    </style>
-</head>
-<body>
-    <h1>客服话术助手</h1>
-    
-    <!-- 一级菜单：选择分类 -->
-    <select id="category" class="menu">
-        <option value="">请选择分类</option>
-        <option value="充值问题">充值问题</option>
-        <option value="登录问题">登录问题</option>
-    </select>
-
-    <!-- 二级菜单：选择子分类（初始隐藏） -->
-    <select id="subCategory" class="menu" style="display: none;">
-        <option value="">请选择子分类</option>
-    </select>
-
-    <!-- 显示话术的区域 -->
-    <div id="response"></div>
-
-    <script>
-        // JSON 文件链接（替换为你的实际链接）
-        const JSON_URL = "https://cdn.jsdelivr.net/gh/你的GitHub用户名/仓库名@main/data.json";
-
-        // 获取页面元素
-        const categorySelect = document.getElementById('category');
-        const subCategorySelect = document.getElementById('subCategory');
-        const responseDiv = document.getElementById('response');
-
-        // 监听一级菜单变化
-        categorySelect.addEventListener('change', async (e) => {
-            const category = e.target.value;
-            subCategorySelect.style.display = category ? 'block' : 'none'; // 显示/隐藏二级菜单
-            responseDiv.innerHTML = ''; // 清空之前的话术
-
-            if (!category) return;
-
-            try {
-                // 加载 JSON 数据
-                const response = await fetch(JSON_URL);
-                const data = await response.json();
-
-                // 提取当前分类下的子分类（去重）
-                const subCategories = data
-                    .filter(item => item.category === category)
-                    .map(item => item.subCategory)
-                    .filter((value, index, self) => self.indexOf(value) === index); // 去重
-
-                // 动态生成二级菜单选项
-                subCategorySelect.innerHTML = '<option value="">请选择子分类</option>' +
-                    subCategories.map(sub => `<option value="${sub}">${sub}</option>`).join('');
-            } catch (error) {
-                console.error("加载数据失败:", error);
-            }
-        });
-
-        // 监听二级菜单变化
-        subCategorySelect.addEventListener('change', async (e) => {
-            const subCategory = e.target.value;
-            if (!subCategory) return;
-
-            try {
-                // 加载 JSON 数据
-                const response = await fetch(JSON_URL);
-                const data = await response.json();
-
-                // 查找匹配的话术
-                const result = data.find(item => 
-                    item.category === categorySelect.value && 
-                    item.subCategory === subCategory
-                );
-                responseDiv.innerHTML = result ? result.response : "暂无话术";
-            } catch (error) {
-                console.error("加载数据失败:", error);
-            }
-        });
-    </script>
-</body>
-</html>
+[
+  {
+    "category": "充值问题",
+    "subCategories": [
+      {
+        "name": "无法充值",
+        "response": "1. 无法充值：请检查网络连接或更换支付方式..."
+      },
+      {
+        "name": "充值不到账",
+        "response": "2. 充值不到账：请联系客服提供订单号查询..."
+      }
+    ]
+  },
+  {
+    "category": "登录问题", 
+    "subCategories": [
+      {
+        "name": "账号无法登录",
+        "response": "建议您尝试重置密码..."
+      }
+    ]
+  }
+]

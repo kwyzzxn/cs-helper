@@ -1,17 +1,24 @@
 [
   {
     "category": "充值问题",
-    "subCategory": "无法充值",
-    "response": "1. 无法充值：请检查网络连接或更换支付方式..."
+    "subCategories": [
+      {
+        "name": "无法充值",
+        "response": "1. 无法充值：请检查网络连接或更换支付方式..."
+      },
+      {
+        "name": "充值不到账",
+        "response": "2. 充值不到账：请联系客服提供订单号查询..."
+      }
+    ]
   },
   {
-    "category": "充值问题",
-    "subCategory": "充值不到账",
-    "response": "2. 充值不到账：请联系客服提供订单号查询..."
-  },
-  {
-    "category": "登录问题",
-    "subCategory": "账号无法登录",
-    "response": "建议您尝试重置密码..."
+    "category": "登录问题", 
+    "subCategories": [
+      {
+        "name": "账号无法登录",
+        "response": "建议您尝试重置密码..."
+      }
+    ]
   }
 ]
