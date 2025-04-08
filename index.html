@@ -7,9 +7,32 @@
         select { margin: 10px 0; padding: 5px; display: none; }
         #response { margin-top: 20px; padding: 15px; border: 1px solid #ddd; }
     </style>
+/* 新增样式 */
+#response {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  margin-top: 20px;
+  line-height: 1.6;
+  color: #333;
+}
+
+select {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 10px;
+  margin: 10px 0;
+  width: 100%;
+  background: #f8f9fa;
+}
 </head>
 <body>
     <h1>客服话术助手</h1>
+<!-- 搜索框 -->
+<input type="text" id="search" placeholder="输入关键词搜索（如“充值”）" 
+       style="width: 100%; padding: 12px; margin: 20px 0; 
+              border: 2px solid #4a90e2; border-radius: 8px; font-size: 16px;">
     <select id="mainCategory">
         <option value="">请选择主分类</option>
     </select>
@@ -22,6 +45,34 @@
     <div id="response"></div>
 
     <script>
+// 新增搜索功能
+document.getElementById('search').addEventListener('input', function(e) {
+  const keyword = e.target.value.toLowerCase();
+  const responseDiv = document.getElementById('response');
+  
+  if (keyword.length < 1) {
+    responseDiv.innerHTML = '';
+    return;
+  }
+
+  // 深度搜索 JSON 数据
+  const results = [];
+  data.forEach(category => {
+    category.subCategories.forEach(sub => {
+      if (sub.children) {
+        sub.children.forEach(child => {
+          if (child.response.toLowerCase().includes(keyword)) {
+            results.push(`<p><strong>${category.category} → ${sub.name} → ${child.name}:</strong> ${child.response}</p>`);
+          }
+        });
+      } else if (sub.response.toLowerCase().includes(keyword)) {
+        results.push(`<p><strong>${category.category} → ${sub.name}:</strong> ${sub.response}</p>`);
+      }
+    });
+  });
+
+  responseDiv.innerHTML = results.length > 0 ? results.join('') : '未找到相关话术';
+});
         async function init() {
             try {
                 const response = await fetch('data.json');
