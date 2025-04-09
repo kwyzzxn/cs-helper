@@ -4,74 +4,172 @@
     <title>客服话术助手</title>
     <meta charset="UTF-8">
     <style>
+        :root {
+            --primary: #4a90e2;
+            --secondary: #6c5ce7;
+            --accent: #00c2a2;
+            --text: #2d3436;
+            --background: #f8f9fa;
+        }
+
         body {
-            font-family: Arial;
+            font-family: 'Arial', sans-serif;
             padding: 20px;
             max-width: 800px;
             margin: 0 auto;
-            background: #f5f7fa;
+            background: var(--background);
         }
+
+        .header {
+            background: linear-gradient(135deg, #4a90e2 0%, #2b6cd4 100%);
+            padding: 1.2rem 2rem;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin: -20px -20px 2rem;
+        }
+
+        .header h1 {
+            color: white;
+            margin: 0;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-align: center;
+        }
+
         #search {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             margin: 20px 0;
-            border: 2px solid #4a90e2;
-            border-radius: 8px;
+            border: 2px solid var(--primary);
+            border-radius: 10px;
             font-size: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 4px rgba(74,144,226,0.1);
         }
+
+        #search:focus {
+            outline: none;
+            box-shadow: 0 4px 12px rgba(74,144,226,0.2);
+            transform: translateY(-2px);
+        }
+
+        .select-wrapper {
+            position: relative;
+            margin: 1rem 0;
+        }
+
         select {
             width: 100%;
-            padding: 10px;
+            padding: 12px 40px 12px 15px;
             margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            background: #f8f9fa;
-            display: none;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: #ffffff;
+            font-size: 15px;
+            appearance: none;
+            transition: all 0.3s ease;
         }
+
+        select:hover {
+            border-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .select-wrapper::after {
+            content: "⌄";
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            font-size: 20px;
+            pointer-events: none;
+        }
+
         #response {
             background: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
-            margin-top: 20px;
-            color: #333;
-            white-space: pre-wrap; /* 新增：保留换行符 */
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-top: 25px;
+            color: var(--text);
+            line-height: 1.7;
+            animation: fadeIn 0.4s ease-out;
         }
-        /* 新增：列表样式 */
+
         .response-list {
             margin: 0;
             padding-left: 20px;
         }
+
         .response-list li {
             margin-bottom: 20px;
-            line-height: 1.8;
-            border-bottom: 1px solid #eee; /* 分隔线 */
-            padding-bottom: 15px;
+            padding: 15px;
+            border-left: 3px solid transparent;
+            transition: all 0.2s ease;
         }
-        .response-list li:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
+
+        .response-list li:hover {
+            transform: translateX(8px);
+            background: var(--background);
+            border-left-color: var(--accent);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            .header {
+                padding: 1rem;
+                border-radius: 0;
+            }
+            select {
+                font-size: 14px;
+                padding: 12px 35px 12px 12px;
+            }
+            #response {
+                padding: 18px;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>客服话术助手</h1>
-    <input type="text" id="search" placeholder="输入关键词搜索（如“充值”）">
-    <select id="mainCategory">
-        <option value="">请选择主分类</option>
-    </select>
-    <select id="subCategory">
-        <option value="">请选择子分类</option>
-    </select>
-    <select id="subSubCategory">
-        <option value="">请选择平台</option>
-    </select>
+    <div class="header">
+        <h1>客服话术助手</h1>
+    </div>
+    
+    <div class="select-wrapper">
+        <input type="text" id="search" placeholder="输入关键词搜索（如“下载链接”）">
+    </div>
+    
+    <div class="select-wrapper">
+        <select id="mainCategory">
+            <option value="">请选择主分类</option>
+        </select>
+    </div>
+    
+    <div class="select-wrapper">
+        <select id="subCategory">
+            <option value="">请选择子分类</option>
+        </select>
+    </div>
+    
+    <div class="select-wrapper">
+        <select id="subSubCategory">
+            <option value="">请选择平台</option>
+        </select>
+    </div>
+
     <div id="response"></div>
 
     <script>
         let data = [];
 
-        // 搜索功能
         document.getElementById('search').addEventListener('input', function(e) {
             const keyword = e.target.value.toLowerCase();
             const responseDiv = document.getElementById('response');
@@ -89,7 +187,7 @@
                                 child.response.join('\n') : 
                                 child.response;
                             if (responseContent.toLowerCase().includes(keyword)) {
-                                results.push(`<p><strong>${category.category} → ${sub.name} → ${child.name}:</strong>\n${responseContent}</p>`);
+                                results.push(`<p><strong>${category.category} → ${sub.name} → ${child.name}:</strong><br>${responseContent}</p>`);
                             }
                         });
                     } else if (sub.response) {
@@ -97,15 +195,14 @@
                             sub.response.join('\n') : 
                             sub.response;
                         if (responseContent.toLowerCase().includes(keyword)) {
-                            results.push(`<p><strong>${category.category} → ${sub.name}:</strong>\n${responseContent}</p>`);
+                            results.push(`<p><strong>${category.category} → ${sub.name}:</strong><br>${responseContent}</p>`);
                         }
                     }
                 });
             });
-            responseDiv.innerHTML = results.length ? results.join('<br>') : '未找到相关话术';
+            responseDiv.innerHTML = results.length ? results.join('<hr style="margin:1.5rem 0; border-color: #eee;">') : '<div style="color:#666; text-align:center;">未找到相关话术</div>';
         });
 
-        // 初始化函数
         async function init() {
             try {
                 const response = await fetch('data.json');
@@ -115,21 +212,19 @@
                 const subSubSelect = document.getElementById('subSubCategory');
                 const responseDiv = document.getElementById('response');
 
-                // 初始化主分类
                 data.forEach(category => {
                     const option = document.createElement('option');
                     option.value = category.category;
                     option.textContent = category.category;
                     mainSelect.appendChild(option);
                 });
-                mainSelect.style.display = 'block';
+                mainSelect.parentElement.style.display = 'block';
 
-                // 主分类变化逻辑
                 mainSelect.addEventListener('change', () => {
                     const category = data.find(item => item.category === mainSelect.value);
-                    subSelect.style.display = category ? 'block' : 'none';
+                    subSelect.parentElement.style.display = category ? 'block' : 'none';
                     subSelect.innerHTML = '<option value="">请选择子分类</option>';
-                    subSubSelect.style.display = 'none';
+                    subSubSelect.parentElement.style.display = 'none';
                     responseDiv.innerHTML = '';
 
                     if (category) {
@@ -142,11 +237,10 @@
                     }
                 });
 
-                // 子分类变化逻辑
                 subSelect.addEventListener('change', () => {
                     const mainCat = data.find(item => item.category === mainSelect.value);
                     const subCat = mainCat.subCategories.find(sub => sub.name === subSelect.value);
-                    subSubSelect.style.display = subCat.subCategories ? 'block' : 'none';
+                    subSubSelect.parentElement.style.display = subCat.subCategories ? 'block' : 'none';
                     subSubSelect.innerHTML = '<option value="">请选择平台</option>';
                     responseDiv.innerHTML = '';
 
@@ -158,7 +252,6 @@
                             subSubSelect.appendChild(option);
                         });
                     } else if (subCat.response) {
-                        // 新增：处理多行回复
                         const content = Array.isArray(subCat.response) ? 
                             `<ul class="response-list">${subCat.response.map(item => `<li>${item}</li>`).join('')}</ul>` : 
                             subCat.response;
@@ -166,12 +259,10 @@
                     }
                 });
 
-                // 三级分类变化逻辑
                 subSubSelect.addEventListener('change', () => {
                     const mainCat = data.find(item => item.category === mainSelect.value);
                     const subCat = mainCat.subCategories.find(sub => sub.name === subSelect.value);
                     const subSubCat = subCat.subCategories.find(child => child.name === subSubSelect.value);
-                    // 新增：处理多行回复
                     const content = Array.isArray(subSubCat.response) ? 
                         `<ul class="response-list">${subSubCat.response.map(item => `<li>${item}</li>`).join('')}</ul>` : 
                         subSubCat.response;
