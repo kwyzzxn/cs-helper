@@ -34,8 +34,23 @@
             border-radius: 10px;
             box-shadow: 0 2px 12px rgba(0,0,0,0.1);
             margin-top: 20px;
-            line-height: 1.6;
             color: #333;
+            white-space: pre-wrap; /* 新增：保留换行符 */
+        }
+        /* 新增：列表样式 */
+        .response-list {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .response-list li {
+            margin-bottom: 20px;
+            line-height: 1.8;
+            border-bottom: 1px solid #eee; /* 分隔线 */
+            padding-bottom: 15px;
+        }
+        .response-list li:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
         }
     </style>
 </head>
@@ -70,16 +85,24 @@
                 category.subCategories.forEach(sub => {
                     if (sub.subCategories) {
                         sub.subCategories.forEach(child => {
-                            if (child.response.toLowerCase().includes(keyword)) {
-                                results.push(`<p><strong>${category.category} → ${sub.name} → ${child.name}:</strong> ${child.response}</p>`);
+                            const responseContent = Array.isArray(child.response) ? 
+                                child.response.join('\n') : 
+                                child.response;
+                            if (responseContent.toLowerCase().includes(keyword)) {
+                                results.push(`<p><strong>${category.category} → ${sub.name} → ${child.name}:</strong>\n${responseContent}</p>`);
                             }
                         });
-                    } else if (sub.response && sub.response.toLowerCase().includes(keyword)) {
-                        results.push(`<p><strong>${category.category} → ${sub.name}:</strong> ${sub.response}</p>`);
+                    } else if (sub.response) {
+                        const responseContent = Array.isArray(sub.response) ? 
+                            sub.response.join('\n') : 
+                            sub.response;
+                        if (responseContent.toLowerCase().includes(keyword)) {
+                            results.push(`<p><strong>${category.category} → ${sub.name}:</strong>\n${responseContent}</p>`);
+                        }
                     }
                 });
             });
-            responseDiv.innerHTML = results.length ? results.join('') : '未找到相关话术';
+            responseDiv.innerHTML = results.length ? results.join('<br>') : '未找到相关话术';
         });
 
         // 初始化函数
@@ -135,7 +158,11 @@
                             subSubSelect.appendChild(option);
                         });
                     } else if (subCat.response) {
-                        responseDiv.innerHTML = subCat.response;
+                        // 新增：处理多行回复
+                        const content = Array.isArray(subCat.response) ? 
+                            `<ul class="response-list">${subCat.response.map(item => `<li>${item}</li>`).join('')}</ul>` : 
+                            subCat.response;
+                        responseDiv.innerHTML = content;
                     }
                 });
 
@@ -144,7 +171,11 @@
                     const mainCat = data.find(item => item.category === mainSelect.value);
                     const subCat = mainCat.subCategories.find(sub => sub.name === subSelect.value);
                     const subSubCat = subCat.subCategories.find(child => child.name === subSubSelect.value);
-                    responseDiv.innerHTML = subSubCat.response;
+                    // 新增：处理多行回复
+                    const content = Array.isArray(subSubCat.response) ? 
+                        `<ul class="response-list">${subSubCat.response.map(item => `<li>${item}</li>`).join('')}</ul>` : 
+                        subSubCat.response;
+                    responseDiv.innerHTML = content;
                 });
 
             } catch (error) {
