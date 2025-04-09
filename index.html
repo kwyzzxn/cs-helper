@@ -81,6 +81,7 @@
             margin: 1rem 0;
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
             white-space: pre-line;
+            line-height: 1.6;
         }
 
         .response-header {
@@ -118,10 +119,10 @@
 
     <script>
         let data = [];
-        const initSelect = (select, items) => {
-            select.innerHTML = items.map(item => 
-                `<option value="${item.name}">${item.name}</option>`
-            ).join('');
+        const initSelect = (select, items, placeholder) => {
+            const defaultOption = `<option value="">${placeholder}</option>`;
+            const options = items.map(item => `<option value="${item.name}">${item.name}</option>`).join('');
+            select.innerHTML = defaultOption + options;
         };
 
         const updateResponse = () => {
@@ -141,7 +142,8 @@
                                         item.response;
                                     content += `<div class="response-card">
                                         <div class="response-header">${category.category} → ${sub.name} → ${item.name}</div>
-                                        <div>${response}</div>
+                                        ${response.replace(/\n/g, '
+')}
                                     </div>`;
                                 }
                             });
@@ -177,7 +179,7 @@
             document.getElementById('response').innerHTML = results.map(result => `
                 <div class="response-card">
                     <div class="response-header">${result.path}</div>
-                    <div>${result.content}</div>
+                    ${result.content}
                 </div>
             `).join('');
         });
@@ -188,19 +190,20 @@
                 data = await response.json();
                 
                 const mainCat = document.getElementById('mainCategory');
-                initSelect(mainCat, data.map(c => ({name: c.category})));
+                initSelect(mainCat, data.map(c => ({name: c.category})), '请选择主分类');
                 
                 mainCat.addEventListener('change', () => {
                     const category = data.find(c => c.category === mainCat.value);
-                    initSelect(document.getElementById('subCategory'), category?.subCategories || []);
-                    document.getElementById('subSubCategory').innerHTML = '<option value="">请选择平台</option>';
+                    const subCatSelect = document.getElementById('subCategory');
+                    initSelect(subCatSelect, category?.subCategories || [], '请选择子分类');
+                    initSelect(document.getElementById('subSubCategory'), [], '请选择平台');
                     updateResponse();
                 });
 
                 document.getElementById('subCategory').addEventListener('change', () => {
                     const category = data.find(c => c.category === mainCat.value);
                     const sub = category?.subCategories.find(s => s.name === document.getElementById('subCategory').value);
-                    initSelect(document.getElementById('subSubCategory'), sub?.subCategories || []);
+                    initSelect(document.getElementById('subSubCategory'), sub?.subCategories || [], '请选择平台');
                     updateResponse();
                 });
 
