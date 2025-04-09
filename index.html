@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>客服话术助手</title>
+    <title>客服小助手</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
@@ -10,7 +10,7 @@
             --secondary: #6c5ce7;
             --accent: #00c2a2;
             --text: #2d3436;
-            --background: linear-gradient(135deg, #f8f9fa 0%, #e7f3ff 100%);
+            --background: linear-gradient(135deg, #f8f9fa 0%, #e0ebff 100%);
         }
 
         body {
@@ -50,35 +50,24 @@
             transition: all 0.3s ease;
         }
 
-        #search:focus {
-            outline: none;
-            box-shadow: 0 4px 16px rgba(74, 144, 226, 0.2);
-        }
-
         .select-group {
-            display: flex;
+            display: grid;
             gap: 1rem;
             margin: 2rem 0;
         }
 
         select {
-            flex: 1;
+            width: 100%;
             padding: 0.8rem 2.5rem 0.8rem 1.2rem;
             border: 2px solid #e0f0ff;
             border-radius: 8px;
             background: white;
             font-size: 1rem;
             appearance: none;
-            transition: all 0.3s ease;
-        }
-
-        select.platform {
-            background: #f0f0f0;
         }
 
         .select-wrapper {
             position: relative;
-            flex: 1;
         }
 
         .select-wrapper::after {
@@ -99,31 +88,39 @@
             margin-top: 2rem;
             line-height: 1.7;
         }
+
+        .response-item {
+            margin: 1rem 0;
+            padding: 1.2rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent);
+        }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>智能客服话术系统</h1>
+        <h1>客服小助手</h1>
     </div>
     
-    <input type="text" id="search" placeholder="输入关键词搜索">
+    <input type="text" id="search" placeholder="🔍 输入关键词搜索">
     
     <div class="select-group">
         <div class="select-wrapper">
             <select id="mainCategory">
-                <option value="">游戏问题</option>
+                <option value="">请选择主分类</option>
             </select>
         </div>
         
         <div class="select-wrapper">
             <select id="subCategory">
-                <option value="">子分类</option>
+                <option value="">请选择子分类</option>
             </select>
         </div>
         
         <div class="select-wrapper">
-            <select id="subSubCategory" class="platform">
-                <option value="">平台</option>
+            <select id="subSubCategory">
+                <option value="">请选择平台</option>
             </select>
         </div>
     </div>
@@ -132,60 +129,106 @@
 
     <script>
         let data = [];
+        const mainSelect = document.getElementById('mainCategory');
+        const subSelect = document.getElementById('subCategory');
+        const subSubSelect = document.getElementById('subSubCategory');
+        const responseDiv = document.getElementById('response');
 
-        document.getElementById('search').addEventListener('input', function(e) {
-            const keyword = e.target.value.toLowerCase();
-            const responseDiv = document.getElementById('response');
+        // 初始化下拉菜单
+        const initSelect = (selectElement, items, placeholder) => {
+            selectElement.innerHTML = `<option value="">${placeholder}</option>`;
+            items.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.name || item;
+                option.textContent = item.name || item;
+                selectElement.appendChild(option);
+            });
+        };
+
+        // 显示响应内容
+        const showResponse = (content) => {
+            if (Array.isArray(content)) {
+                responseDiv.innerHTML = content.map(item => 
+                    `<div class="response-item">${item}</div>`
+                ).join('');
+            } else {
+                responseDiv.innerHTML = `<div class="response-item">${content}</div>`;
+            }
+        };
+
+        // 分类选择逻辑
+        mainSelect.addEventListener('change', () => {
+            const category = data.find(c => c.category === mainSelect.value);
+            initSelect(subSelect, category?.subCategories || [], '请选择子分类');
+            subSubSelect.innerHTML = '<option value="">请选择平台</option>';
             responseDiv.innerHTML = '';
+        });
+
+        subSelect.addEventListener('change', () => {
+            const category = data.find(c => c.category === mainSelect.value);
+            const subCategory = category?.subCategories.find(s => s.name === subSelect.value);
             
+            if (subCategory?.subCategories) {
+                initSelect(subSubSelect, subCategory.subCategories, '请选择平台');
+            } else {
+                subSubSelect.innerHTML = '<option value="">请选择平台</option>';
+                if (subCategory?.response) showResponse(subCategory.response);
+            }
+        });
+
+        subSubSelect.addEventListener('change', () => {
+            const category = data.find(c => c.category === mainSelect.value);
+            const subCategory = category?.subCategories.find(s => s.name === subSelect.value);
+            const platform = subCategory?.subCategories?.find(p => p.name === subSubSelect.value);
+            
+            if (platform?.response) showResponse(platform.response);
+        });
+
+        // 搜索功能
+        document.getElementById('search').addEventListener('input', (e) => {
+            const keyword = e.target.value.toLowerCase();
+            responseDiv.innerHTML = '';
+
+            const searchResults = [];
             data.forEach(category => {
                 category.subCategories.forEach(sub => {
-                    (sub.subCategories || [sub]).forEach(child => {
-                        const content = Array.isArray(child.response) ? 
-                            child.response.join(' ') : 
-                            child.response;
-                        if(content.toLowerCase().includes(keyword)) {
-                            responseDiv.innerHTML += `
-                                <div style="margin:1rem 0;padding:1rem;background:#f8f9fa;border-radius:8px">
-                                    <strong>${category.category} → ${sub.name}</strong>
-                                    <p>${content}</p>
-                                </div>
-                            `;
+                    (sub.subCategories || [sub]).forEach(item => {
+                        const content = Array.isArray(item.response) ? 
+                            item.response.join(' ') : 
+                            item.response;
+                        if (content.toLowerCase().includes(keyword)) {
+                            searchResults.push({
+                                path: `${category.category} → ${sub.name}${item.name ? ' → ' + item.name : ''}`,
+                                content: content
+                            });
                         }
                     });
                 });
             });
+
+            if (searchResults.length > 0) {
+                responseDiv.innerHTML = searchResults.map(result => 
+                    `<div class="response-item">
+                        <strong>${result.path}</strong>
+                        <div>${result.content}</div>
+                    </div>`
+                ).join('');
+            } else {
+                responseDiv.innerHTML = '<div class="response-item">🔍 未找到相关话术</div>';
+            }
         });
 
-        async function init() {
+        // 初始化数据
+        (async () => {
             try {
                 const response = await fetch('data.json');
                 data = await response.json();
-                
-                const mainSelect = document.getElementById('mainCategory');
-                const subSelect = document.getElementById('subCategory');
-                const subSubSelect = document.getElementById('subSubCategory');
-
-                mainSelect.innerHTML = '<option value="">游戏问题</option>' + 
-                    data.map(c => `<option value="${c.category}">${c.category}</option>`).join('');
-
-                mainSelect.addEventListener('change', () => {
-                    const category = data.find(c => c.category === mainSelect.value);
-                    subSelect.innerHTML = '<option value="">子分类</option>' + 
-                        (category?.subCategories.map(s => `<option value="${s.name}">${s.name}</option>`)?.join('') || '');
-                });
-
-                subSelect.addEventListener('change', () => {
-                    const category = data.find(c => c.category === mainSelect.value);
-                    const sub = category?.subCategories.find(s => s.name === subSelect.value);
-                    subSubSelect.innerHTML = '<option value="">平台</option>' + 
-                        (sub?.subCategories.map(p => `<option value="${p.name}">${p.name}</option>`)?.join('') || '');
-                });
+                initSelect(mainSelect, data.map(c => c.category), '请选择主分类');
             } catch (error) {
                 console.error('加载失败:', error);
+                alert('数据加载失败，请检查JSON文件');
             }
-        }
-        init();
+        })();
     </script>
 </body>
 </html>
