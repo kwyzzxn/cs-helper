@@ -3,162 +3,75 @@
 <head>
     <title>客服话术助手</title>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        :root {
-            --primary: #4a90e2;
-            --secondary: #6c5ce7;
-            --accent: #00c2a2;
-            --text: #2d3436;
-            --background: #f8f9fa;
-        }
-
         body {
-            font-family: 'Segoe UI', system-ui;
-            padding: 2rem;
+            font-family: Arial;
+            padding: 20px;
             max-width: 800px;
             margin: 0 auto;
-            background: var(--background);
+            background: #f5f7fa;
         }
-
-        h1 {
-            text-align: center;
-            color: var(--primary);
-            margin: 2rem 0;
-            font-size: 2.5rem;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-        }
-
         #search {
             width: 100%;
-            padding: 1rem;
-            margin: 1.5rem 0;
-            border: 2px solid var(--primary);
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 8px rgba(74, 144, 226, 0.1);
+            padding: 12px;
+            margin: 20px 0;
+            border: 2px solid #4a90e2;
+            border-radius: 8px;
+            font-size: 16px;
         }
-
-        #search:focus {
-            outline: none;
-            box-shadow: 0 4px 16px rgba(74, 144, 226, 0.2);
-            transform: scale(1.02);
-        }
-
-        .select-group {
-            display: grid;
-            gap: 1rem;
-            margin: 1.5rem 0;
-        }
-
         select {
             width: 100%;
-            padding: 0.8rem 2.5rem 0.8rem 1rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            background: #fff url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234a90e2'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e") no-repeat right 1rem center;
-            font-size: 1rem;
-            appearance: none;
-            transition: all 0.3s ease;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: #f8f9fa;
+            display: none;
         }
-
-        select:hover {
-            border-color: var(--primary);
-            box-shadow: 0 2px 8px rgba(74, 144, 226, 0.1);
-        }
-
         #response {
             background: #fff;
-            padding: 2rem;
-            border-radius: 16px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
-            margin-top: 2rem;
-            color: var(--text);
-            line-height: 1.6;
-            animation: fadeIn 0.4s ease-out;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            margin-top: 20px;
+            color: #333;
+            white-space: pre-wrap; /* 新增：保留换行符 */
         }
-
+        /* 新增：列表样式 */
         .response-list {
             margin: 0;
-            padding: 0;
-            list-style: none;
+            padding-left: 20px;
         }
-
         .response-list li {
-            padding: 1.2rem;
-            margin: 1rem 0;
-            background: var(--background);
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            margin-bottom: 20px;
+            line-height: 1.8;
+            border-bottom: 1px solid #eee; /* 分隔线 */
+            padding-bottom: 15px;
         }
-
-        .response-list li::before {
-            content: "";
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            width: 3px;
-            background: var(--accent);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .response-list li:hover {
-            transform: translateX(8px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
-
-        .response-list li:hover::before {
-            opacity: 1;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @media (max-width: 768px) {
-            body {
-                padding: 1rem;
-            }
-            h1 {
-                font-size: 2rem;
-            }
-            #response {
-                padding: 1.5rem;
-            }
+        .response-list li:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
         }
     </style>
 </head>
 <body>
     <h1>客服话术助手</h1>
-    
-    <div class="select-group">
-        <input type="text" id="search" placeholder="输入关键词搜索（如“下载链接”）">
-        
-        <select id="mainCategory">
-            <option value="">请选择主分类</option>
-        </select>
-        
-        <select id="subCategory">
-            <option value="">请选择子分类</option>
-        </select>
-        
-        <select id="subSubCategory">
-            <option value="">请选择平台</option>
-        </select>
-    </div>
-
+    <input type="text" id="search" placeholder="输入关键词搜索（如“下载链接”）">
+    <select id="mainCategory">
+        <option value="">请选择主分类</option>
+    </select>
+    <select id="subCategory">
+        <option value="">请选择子分类</option>
+    </select>
+    <select id="subSubCategory">
+        <option value="">请选择平台</option>
+    </select>
     <div id="response"></div>
 
     <script>
-        // 保持原有JavaScript功能不变
         let data = [];
 
+        // 搜索功能
         document.getElementById('search').addEventListener('input', function(e) {
             const keyword = e.target.value.toLowerCase();
             const responseDiv = document.getElementById('response');
@@ -176,7 +89,7 @@
                                 child.response.join('\n') : 
                                 child.response;
                             if (responseContent.toLowerCase().includes(keyword)) {
-                                results.push(`<p><strong>${category.category} → ${sub.name} → ${child.name}:</strong><br>${responseContent}</p>`);
+                                results.push(`<p><strong>${category.category} → ${sub.name} → ${child.name}:</strong>\n${responseContent}</p>`);
                             }
                         });
                     } else if (sub.response) {
@@ -184,16 +97,15 @@
                             sub.response.join('\n') : 
                             sub.response;
                         if (responseContent.toLowerCase().includes(keyword)) {
-                            results.push(`<p><strong>${category.category} → ${sub.name}:</strong><br>${responseContent}</p>`);
+                            results.push(`<p><strong>${category.category} → ${sub.name}:</strong>\n${responseContent}</p>`);
                         }
                     }
                 });
             });
-            responseDiv.innerHTML = results.length ? 
-                `<ul class="response-list">${results.map(item => `<li>${item}</li>`).join('')}</ul>` : 
-                '<div class="no-result">🔍 未找到相关话术</div>';
+            responseDiv.innerHTML = results.length ? results.join('<br>') : '未找到相关话术';
         });
 
+        // 初始化函数
         async function init() {
             try {
                 const response = await fetch('data.json');
@@ -201,17 +113,71 @@
                 const mainSelect = document.getElementById('mainCategory');
                 const subSelect = document.getElementById('subCategory');
                 const subSubSelect = document.getElementById('subSubCategory');
+                const responseDiv = document.getElementById('response');
 
+                // 初始化主分类
                 data.forEach(category => {
                     const option = document.createElement('option');
                     option.value = category.category;
                     option.textContent = category.category;
                     mainSelect.appendChild(option);
                 });
+                mainSelect.style.display = 'block';
 
-                // 保持原有事件监听逻辑不变
-                // ...（与原始代码完全相同的事件处理逻辑）
-                
+                // 主分类变化逻辑
+                mainSelect.addEventListener('change', () => {
+                    const category = data.find(item => item.category === mainSelect.value);
+                    subSelect.style.display = category ? 'block' : 'none';
+                    subSelect.innerHTML = '<option value="">请选择子分类</option>';
+                    subSubSelect.style.display = 'none';
+                    responseDiv.innerHTML = '';
+
+                    if (category) {
+                        category.subCategories.forEach(sub => {
+                            const option = document.createElement('option');
+                            option.value = sub.name;
+                            option.textContent = sub.name;
+                            subSelect.appendChild(option);
+                        });
+                    }
+                });
+
+                // 子分类变化逻辑
+                subSelect.addEventListener('change', () => {
+                    const mainCat = data.find(item => item.category === mainSelect.value);
+                    const subCat = mainCat.subCategories.find(sub => sub.name === subSelect.value);
+                    subSubSelect.style.display = subCat.subCategories ? 'block' : 'none';
+                    subSubSelect.innerHTML = '<option value="">请选择平台</option>';
+                    responseDiv.innerHTML = '';
+
+                    if (subCat.subCategories) {
+                        subCat.subCategories.forEach(child => {
+                            const option = document.createElement('option');
+                            option.value = child.name;
+                            option.textContent = child.name;
+                            subSubSelect.appendChild(option);
+                        });
+                    } else if (subCat.response) {
+                        // 新增：处理多行回复
+                        const content = Array.isArray(subCat.response) ? 
+                            `<ul class="response-list">${subCat.response.map(item => `<li>${item}</li>`).join('')}</ul>` : 
+                            subCat.response;
+                        responseDiv.innerHTML = content;
+                    }
+                });
+
+                // 三级分类变化逻辑
+                subSubSelect.addEventListener('change', () => {
+                    const mainCat = data.find(item => item.category === mainSelect.value);
+                    const subCat = mainCat.subCategories.find(sub => sub.name === subSelect.value);
+                    const subSubCat = subCat.subCategories.find(child => child.name === subSubSelect.value);
+                    // 新增：处理多行回复
+                    const content = Array.isArray(subSubCat.response) ? 
+                        `<ul class="response-list">${subSubCat.response.map(item => `<li>${item}</li>`).join('')}</ul>` : 
+                        subSubCat.response;
+                    responseDiv.innerHTML = content;
+                });
+
             } catch (error) {
                 console.error('加载失败:', error);
                 alert('数据加载失败，请检查JSON文件路径和格式！');
