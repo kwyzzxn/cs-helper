@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>智能客服话术系统</title>
+    <title>客服小助手</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         :root {
-            --primary: #4a90e2;
-            --secondary: #6c5ce7;
+            --primary: #6c5ce7;
+            --secondary: #4a90e2;
             --accent: #00c2a2;
-            --text: #2d3436;
-            --background: #f0f4ff;
+            --background: #f8f9ff;
         }
 
         body {
@@ -23,21 +22,25 @@
         }
 
         .header {
-            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
-            padding: 1.5rem 2rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            padding: 2rem;
             border-radius: 16px;
-            margin: -1rem -1rem 2rem;
-            box-shadow: 0 4px 20px rgba(74, 144, 226, 0.2);
+            margin: -2rem -2rem 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: white;
+            margin: 0 0 1.5rem;
+            font-size: 1.8rem;
         }
 
         #search {
             width: 100%;
-            padding: 1rem 1.5rem;
-            margin: 2rem 0;
-            border: 2px solid var(--primary);
+            padding: 1rem;
+            border: none;
             border-radius: 12px;
-            font-size: 1rem;
-            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
         .select-group {
@@ -48,12 +51,15 @@
 
         select {
             width: 100%;
-            padding: 0.8rem 2.5rem 0.8rem 1.2rem;
-            border: 2px solid #e0f0ff;
+            padding: 1rem;
+            border: 2px solid #e0e0ff;
             border-radius: 8px;
             background: white;
-            font-size: 1rem;
             appearance: none;
+        }
+
+        .select-wrapper {
+            position: relative;
         }
 
         .select-wrapper::after {
@@ -63,50 +69,28 @@
             top: 50%;
             transform: translateY(-50%);
             color: var(--primary);
-            font-size: 1.2rem;
         }
 
-        .search-result {
+        .response-card {
             background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            margin: 1.5rem 0;
             padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
 
-        .result-path {
+        .response-header {
             color: var(--primary);
             font-weight: 600;
             margin-bottom: 1rem;
-            padding-bottom: 0.8rem;
-            border-bottom: 1px solid #eee;
-        }
-
-        .result-content {
-            color: var(--text);
-            line-height: 1.8;
-        }
-
-        .result-content p {
-            margin: 1rem 0;
-            padding-left: 1rem;
-            position: relative;
-        }
-
-        .result-content p::before {
-            content: "•";
-            color: var(--accent);
-            position: absolute;
-            left: 0;
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>智能客服话术系统</h1>
+        <h1>客服小助手</h1>
+        <input type="text" id="search" placeholder="输入关键词搜索">
     </div>
-    
-    <input type="text" id="search" placeholder="输入关键词搜索">
     
     <div class="select-group">
         <div class="select-wrapper">
@@ -114,13 +98,11 @@
                 <option value="">请选择主分类</option>
             </select>
         </div>
-        
         <div class="select-wrapper">
             <select id="subCategory">
                 <option value="">请选择子分类</option>
             </select>
         </div>
-        
         <div class="select-wrapper">
             <select id="subSubCategory">
                 <option value="">请选择平台</option>
@@ -132,9 +114,9 @@
 
     <script>
         let data = [];
-        const initSelect = (selectElement, items) => {
-            selectElement.innerHTML = items.map(item => 
-                `<option value="${item.name || item}">${item.name || item}</option>`
+        const initSelect = (select, items) => {
+            select.innerHTML = items.map(item => 
+                `<option value="${item.name}">${item.name}</option>`
             ).join('');
         };
 
@@ -145,49 +127,44 @@
             data.forEach(category => {
                 category.subCategories.forEach(sub => {
                     (sub.subCategories || [sub]).forEach(item => {
-                        const contents = Array.isArray(item.response) ? 
-                            item.response : 
-                            [item.response];
-                        
-                        contents.forEach(text => {
-                            if(text.toLowerCase().includes(keyword)) {
-                                results.push({
-                                    path: `${category.category} → ${sub.name}${item.name ? ' → ' + item.name : ''}`,
-                                    content: text
-                                });
-                            }
-                        });
+                        const content = Array.isArray(item.response) ? 
+                            item.response.join(' ') : 
+                            item.response;
+                        if(content.toLowerCase().includes(keyword)) {
+                            results.push({
+                                path: `${category.category} → ${sub.name}${item.name ? ' → '+item.name : ''}`,
+                                content: content
+                            });
+                        }
                     });
                 });
             });
 
-            document.getElementById('response').innerHTML = results.length ? 
-                results.map(result => `
-                    <div class="search-result">
-                        <div class="result-path">${result.path}</div>
-                        <div class="result-content">
-                            <p>${result.content}</p>
-                        </div>
-                    </div>
-                `).join('') : 
-                '<div class="search-result">🔍 未找到相关话术</div>';
+            document.getElementById('response').innerHTML = results.map(result => `
+                <div class="response-card">
+                    <div class="response-header">${result.path}</div>
+                    <div>${result.content}</div>
+                </div>
+            `).join('');
         });
 
         (async () => {
             try {
                 const response = await fetch('data.json');
                 data = await response.json();
-                initSelect(mainCategory, data.map(c => ({name: c.category})));
                 
-                mainCategory.addEventListener('change', () => {
-                    const category = data.find(c => c.category === mainCategory.value);
-                    initSelect(subCategory, category?.subCategories || []);
+                const mainCat = document.getElementById('mainCategory');
+                initSelect(mainCat, data.map(c => ({name: c.category})));
+                
+                mainCat.addEventListener('change', () => {
+                    const category = data.find(c => c.category === mainCat.value);
+                    initSelect(document.getElementById('subCategory'), category?.subCategories || []);
                 });
 
-                subCategory.addEventListener('change', () => {
-                    const category = data.find(c => c.category === mainCategory.value);
-                    const sub = category?.subCategories.find(s => s.name === subCategory.value);
-                    initSelect(subSubCategory, sub?.subCategories || []);
+                document.getElementById('subCategory').addEventListener('change', () => {
+                    const category = data.find(c => c.category === mainCat.value);
+                    const sub = category?.subCategories.find(s => s.name === document.getElementById('subCategory').value);
+                    initSelect(document.getElementById('subSubCategory'), sub?.subCategories || []);
                 });
             } catch (error) {
                 console.error('加载失败:', error);
