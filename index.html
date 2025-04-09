@@ -20,15 +20,14 @@
             max-width: 800px;
             margin: 0 auto;
             background: var(--background);
-            position: relative;
         }
 
         .header {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
             padding: 1.5rem 2rem;
             border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(74, 144, 226, 0.2);
             margin: -1rem -1rem 2rem;
+            box-shadow: 0 4px 20px rgba(74, 144, 226, 0.2);
         }
 
         .header h1 {
@@ -37,16 +36,18 @@
             font-weight: 600;
             text-align: center;
             font-size: 2.2rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
         }
 
         #search {
             width: 100%;
             padding: 1rem 1.5rem;
+            margin: 2rem 0;
             border: 2px solid var(--primary);
             border-radius: 12px;
             font-size: 1rem;
+            background: white;
             transition: all 0.3s ease;
-            background: rgba(255,255,255,0.9);
         }
 
         #search:focus {
@@ -55,20 +56,29 @@
         }
 
         .select-group {
-            display: grid;
-            gap: 1.2rem;
+            display: flex;
+            gap: 1rem;
             margin: 2rem 0;
         }
 
         select {
-            width: 100%;
+            flex: 1;
             padding: 0.8rem 2.5rem 0.8rem 1.2rem;
             border: 2px solid #e0f0ff;
             border-radius: 8px;
-            background: rgba(255,255,255,0.95);
+            background: white;
             font-size: 1rem;
             appearance: none;
             transition: all 0.3s ease;
+        }
+
+        select.platform {
+            background: #f0f0f0;
+        }
+
+        .select-wrapper {
+            position: relative;
+            flex: 1;
         }
 
         .select-wrapper::after {
@@ -82,26 +92,12 @@
         }
 
         #response {
-            background: rgba(255,255,255,0.95);
+            background: white;
             padding: 2rem;
             border-radius: 16px;
             box-shadow: 0 4px 24px rgba(0,0,0,0.06);
             margin-top: 2rem;
             line-height: 1.7;
-            animation: fadeIn 0.4s ease-out;
-        }
-
-        .response-list li {
-            padding: 1.2rem;
-            margin: 1rem 0;
-            background: rgba(248, 249, 250, 0.6);
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
@@ -110,24 +106,24 @@
         <h1>智能客服话术系统</h1>
     </div>
     
-    <input type="text" id="search" placeholder="🔍 输入关键词搜索">
+    <input type="text" id="search" placeholder="输入关键词搜索">
     
     <div class="select-group">
         <div class="select-wrapper">
             <select id="mainCategory">
-                <option value="">📁 主分类</option>
+                <option value="">游戏问题</option>
             </select>
         </div>
         
         <div class="select-wrapper">
             <select id="subCategory">
-                <option value="">📂 子分类</option>
+                <option value="">子分类</option>
             </select>
         </div>
         
         <div class="select-wrapper">
-            <select id="subSubCategory">
-                <option value="">💻 平台</option>
+            <select id="subSubCategory" class="platform">
+                <option value="">平台</option>
             </select>
         </div>
     </div>
@@ -136,26 +132,29 @@
 
     <script>
         let data = [];
-        
+
         document.getElementById('search').addEventListener('input', function(e) {
             const keyword = e.target.value.toLowerCase();
             const responseDiv = document.getElementById('response');
-            responseDiv.innerHTML = keyword ? '' : '';
+            responseDiv.innerHTML = '';
             
-            const results = [];
             data.forEach(category => {
                 category.subCategories.forEach(sub => {
                     (sub.subCategories || [sub]).forEach(child => {
-                        const content = Array.isArray(child.response) ? child.response.join('\n') : child.response;
+                        const content = Array.isArray(child.response) ? 
+                            child.response.join(' ') : 
+                            child.response;
                         if(content.toLowerCase().includes(keyword)) {
-                            results.push(`<p><strong>${category.category} → ${sub.name}${child.name ? ' → '+child.name : ''}</strong><br>${content}</p>`);
+                            responseDiv.innerHTML += `
+                                <div style="margin:1rem 0;padding:1rem;background:#f8f9fa;border-radius:8px">
+                                    <strong>${category.category} → ${sub.name}</strong>
+                                    <p>${content}</p>
+                                </div>
+                            `;
                         }
                     });
                 });
             });
-            responseDiv.innerHTML = results.length ? 
-                `<ul class="response-list">${results.map(i => `<li>${i}</li>`).join('')}</ul>` : 
-                '<div style="text-align:center;color:#666">🔍 未找到相关话术</div>';
         });
 
         async function init() {
@@ -163,24 +162,27 @@
                 const response = await fetch('data.json');
                 data = await response.json();
                 
-                const initSelect = (parent, items) => {
-                    parent.innerHTML = items.map(opt => 
-                        `<option value="${opt.value}">${opt.text}</option>`
-                    ).join('');
-                };
+                const mainSelect = document.getElementById('mainCategory');
+                const subSelect = document.getElementById('subCategory');
+                const subSubSelect = document.getElementById('subSubCategory');
 
-                initSelect(document.getElementById('mainCategory'), 
-                    data.map(c => ({value: c.category, text: c.category}))
-                );
+                mainSelect.innerHTML = '<option value="">游戏问题</option>' + 
+                    data.map(c => `<option value="${c.category}">${c.category}</option>`).join('');
 
-                document.querySelectorAll('select').forEach(select => {
-                    select.addEventListener('change', () => {
-                        // 原有选择逻辑
-                    });
+                mainSelect.addEventListener('change', () => {
+                    const category = data.find(c => c.category === mainSelect.value);
+                    subSelect.innerHTML = '<option value="">子分类</option>' + 
+                        (category?.subCategories.map(s => `<option value="${s.name}">${s.name}</option>`)?.join('') || '');
                 });
 
+                subSelect.addEventListener('change', () => {
+                    const category = data.find(c => c.category === mainSelect.value);
+                    const sub = category?.subCategories.find(s => s.name === subSelect.value);
+                    subSubSelect.innerHTML = '<option value="">平台</option>' + 
+                        (sub?.subCategories.map(p => `<option value="${p.name}">${p.name}</option>`)?.join('') || '');
+                });
             } catch (error) {
-                alert('数据加载失败，请检查data.json文件');
+                console.error('加载失败:', error);
             }
         }
         init();
