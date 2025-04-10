@@ -13,6 +13,25 @@
             --background: linear-gradient(135deg, #f8f9fa 0%, #e0ebff 100%);
         }
 
+        /* 新增搜索框容器样式 */
+        .search-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        /* 修改搜索框宽度设置 */
+        #search {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            font-size: 1rem;
+            background: white;
+            box-sizing: border-box;
+        }
+
+        /* 保持原有其他样式不变 */
         body {
             font-family: 'Segoe UI', system-ui;
             padding: 2rem;
@@ -39,21 +58,14 @@
             text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
         }
 
-        #search {
-            width: 100%;
-            padding: 1rem 1.5rem;
-            margin: 2rem 0;
-            border: 2px solid var(--primary);
-            border-radius: 12px;
-            font-size: 1rem;
-            background: white;
-            transition: all 0.3s ease;
-        }
-
         .select-group {
             display: grid;
             gap: 1rem;
             margin: 2rem 0;
+            max-width: 600px;
+            padding: 0 1rem;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         select {
@@ -103,7 +115,10 @@
         <h1>客服小助手</h1>
     </div>
     
-    <input type="text" id="search" placeholder="🔍 输入关键词搜索">
+    <!-- 修改搜索框容器结构 -->
+    <div class="search-container">
+        <input type="text" id="search" placeholder="🔍 输入关键词搜索">
+    </div>
     
     <div class="select-group">
         <div class="select-wrapper">
@@ -127,6 +142,7 @@
 
     <div id="response"></div>
 
+    <!-- 保持原有JavaScript不变 -->
     <script>
         let data = [];
         const mainSelect = document.getElementById('mainCategory');
