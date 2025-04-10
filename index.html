@@ -10,17 +10,23 @@
             --secondary: #6c5ce7;
             --accent: #00c2a2;
             --text: #2d3436;
+            --background: linear-gradient(135deg, #f8f9fa 0%, #e0ebff 100%);
         }
 
-        /* 新增视频背景样式 */
-        #video-bg {
-            position: fixed;
-            right: 0;
-            bottom: 0;
-            min-width: 100%;
-            min-height: 100%;
-            z-index: -1;
-            object-fit: cover;
+        .search-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        #search {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            font-size: 1rem;
+            background: white;
+            box-sizing: border-box;
         }
 
         body {
@@ -29,25 +35,79 @@
             min-height: 100vh;
             max-width: 800px;
             margin: 0 auto;
-            background: rgba(255, 255, 255, 0.85);
+            background: var(--background);
         }
 
-        /* 保持原有其他样式不变 */
-        .search-container { /* ... */ }
-        #search { /* ... */ }
-        .header { /* ... */ }
-        .select-group { /* ... */ }
-        #response { /* ... */ }
-        /* 其他样式保持不变... */
+        .header {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+            padding: 1.5rem 2rem;
+            border-radius: 16px;
+            margin: -1rem -1rem 2rem;
+            box-shadow: 0 4px 20px rgba(74, 144, 226, 0.2);
+        }
+
+        .header h1 {
+            color: white;
+            margin: 0;
+            font-weight: 600;
+            text-align: center;
+            font-size: 2.2rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .select-group {
+            display: grid;
+            gap: 1rem;
+            margin: 2rem 0;
+            max-width: 600px;
+            padding: 0 1rem;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        select {
+            width: 100%;
+            padding: 0.8rem 2.5rem 0.8rem 1.2rem;
+            border: 2px solid #e0f0ff;
+            border-radius: 8px;
+            background: white;
+            font-size: 1rem;
+            appearance: none;
+        }
+
+        .select-wrapper {
+            position: relative;
+        }
+
+        .select-wrapper::after {
+            content: "⌄";
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        #response {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+            margin-top: 2rem;
+            line-height: 1.7;
+        }
+
+        .response-item {
+            margin: 1rem 0;
+            padding: 1.2rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent);
+        }
     </style>
 </head>
 <body>
-    <!-- 新增视频背景 -->
-    <video autoplay muted loop id="video-bg">
-        <source src="https://steamuserimages-a.akamaihd.net/ugc/2675962311291981294/7F3C0D74B7FEB5F7B2A2B0A7A0A7B0A7A0A7B0A7/7F3C0D74B7FEB5F7B2A2B0A7A0A7B0A7A0A7B0A7.mp4" type="video/mp4">
-    </video>
-
-    <!-- 原有页面结构 -->
     <div class="header">
         <h1>客服小助手</h1>
     </div>
@@ -79,7 +139,6 @@
     <div id="response"></div>
 
     <script>
-        // 保持原有脚本不变
         let data = [];
         const mainSelect = document.getElementById('mainCategory');
         const subSelect = document.getElementById('subCategory');
@@ -186,11 +245,6 @@
                 alert('数据加载失败，请检查JSON文件');
             }
         })();
-
-        // 视频自动播放保障
-        document.addEventListener('click', function() {
-            document.getElementById('video-bg').play();
-        }, { once: true });
     </script>
 </body>
 </html>
