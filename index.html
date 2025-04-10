@@ -195,25 +195,30 @@
         document.getElementById('search').addEventListener('input', (e) => {
             const keyword = e.target.value.toLowerCase();
             responseDiv.innerHTML = '';
-
-            if (!keyword) return; // 新增空关键词判断
+            if (!keyword) return;
 
             const searchResults = [];
             data.forEach(category => {
                 category.subCategories.forEach(sub => {
                     (sub.subCategories || [sub]).forEach(item => {
-                        const contents = Array.isArray(item.response) ? 
-                            item.response : 
-                            [item.response];
-                        
-                        contents.forEach(content => {
-                            if (content.toLowerCase().includes(keyword)) {
+                        const contents = Array.isArray(item.response) ? item.response : [item.response];
+                        const pathParts = [
+                            category.category.toLowerCase(),
+                            sub.name.toLowerCase(),
+                            item.name ? item.name.toLowerCase() : ''
+                        ];
+
+                        const hasMatch = contents.some(content => content.toLowerCase().includes(keyword)) ||
+                                       pathParts.some(part => part.includes(keyword));
+
+                        if (hasMatch) {
+                            contents.forEach(content => {
                                 searchResults.push({
                                     path: `${category.category} → ${sub.name}${item.name ? ' → ' + item.name : ''}`,
                                     content: content
                                 });
-                            }
-                        });
+                            });
+                        }
                     });
                 });
             });
