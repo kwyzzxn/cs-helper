@@ -112,7 +112,6 @@
         <h1>客服小助手</h1>
     </div>
     
-    <!-- 修改搜索框容器结构 -->
     <div class="search-container">
         <input type="text" id="search" placeholder="🔍 输入关键词搜索">
     </div>
@@ -139,7 +138,6 @@
 
     <div id="response"></div>
 
-    <!-- 保持原有JavaScript不变 -->
     <script>
         let data = [];
         const mainSelect = document.getElementById('mainCategory');
@@ -197,6 +195,8 @@
         document.getElementById('search').addEventListener('input', (e) => {
             const keyword = e.target.value.toLowerCase();
             responseDiv.innerHTML = '';
+
+            if (!keyword) return; // 新增空关键词判断
 
             const searchResults = [];
             data.forEach(category => {
