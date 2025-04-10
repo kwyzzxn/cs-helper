@@ -134,7 +134,6 @@
         const subSubSelect = document.getElementById('subSubCategory');
         const responseDiv = document.getElementById('response');
 
-        // 初始化下拉菜单
         const initSelect = (selectElement, items, placeholder) => {
             selectElement.innerHTML = `<option value="">${placeholder}</option>`;
             items.forEach(item => {
@@ -145,7 +144,6 @@
             });
         };
 
-        // 显示响应内容
         const showResponse = (content) => {
             if (Array.isArray(content)) {
                 responseDiv.innerHTML = content.map(item => 
@@ -156,7 +154,6 @@
             }
         };
 
-        // 分类选择逻辑
         mainSelect.addEventListener('change', () => {
             const category = data.find(c => c.category === mainSelect.value);
             initSelect(subSelect, category?.subCategories || [], '请选择子分类');
@@ -184,7 +181,6 @@
             if (platform?.response) showResponse(platform.response);
         });
 
-        // 搜索功能
         document.getElementById('search').addEventListener('input', (e) => {
             const keyword = e.target.value.toLowerCase();
             responseDiv.innerHTML = '';
@@ -193,15 +189,18 @@
             data.forEach(category => {
                 category.subCategories.forEach(sub => {
                     (sub.subCategories || [sub]).forEach(item => {
-                        const content = Array.isArray(item.response) ? 
-                            item.response.join(' ') : 
-                            item.response;
-                        if (content.toLowerCase().includes(keyword)) {
-                            searchResults.push({
-                                path: `${category.category} → ${sub.name}${item.name ? ' → ' + item.name : ''}`,
-                                content: content
-                            });
-                        }
+                        const contents = Array.isArray(item.response) ? 
+                            item.response : 
+                            [item.response];
+                        
+                        contents.forEach(content => {
+                            if (content.toLowerCase().includes(keyword)) {
+                                searchResults.push({
+                                    path: `${category.category} → ${sub.name}${item.name ? ' → ' + item.name : ''}`,
+                                    content: content
+                                });
+                            }
+                        });
                     });
                 });
             });
@@ -218,7 +217,6 @@
             }
         });
 
-        // 初始化数据
         (async () => {
             try {
                 const response = await fetch('data.json');
