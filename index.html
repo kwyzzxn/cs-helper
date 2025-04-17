@@ -5,26 +5,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* 仅修改响应内容字体相关样式 */
+        /* 仅修改响应框动效和装饰 */
         .response-item {
             margin: 1.2rem 0;
             padding: 1.5rem;
             background: #FFF9E6;
             border-radius: 15px;
             border-left: 5px solid var(--secondary);
-            font-size: 1.2rem;  /* 放大字体 */
-            line-height: 1.7;  /* 增加行距 */
-            font-family: system-ui, -apple-system;  /* 更清晰的字体 */
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
         }
 
-        .response-item div {
-            font-size: 1.1rem;  /* 内容字体放大 */
-            line-height: 1.8;  /* 增加内容行距 */
-            color: #333;  /* 提高对比度 */
-            font-weight: 500;  /* 中等字重 */
+        .response-item:hover {
+            transform: translateX(8px);
+            box-shadow: 4px 4px 12px rgba(255, 139, 139, 0.1);
         }
 
-        /* 保持其他所有样式不变 */
+        .response-item::before {
+            content: "✨";
+            position: absolute;
+            left: -28px;
+            top: 15px;
+            opacity: 0;
+            transition: all 0.4s ease;
+            font-size: 1.4rem;
+        }
+
+        .response-item:hover::before {
+            left: -18px;
+            opacity: 0.4;
+        }
+
+        .response-item::after {
+            content: "✦";
+            position: absolute;
+            right: -20px;
+            bottom: 10px;
+            opacity: 0;
+            color: var(--secondary);
+            transition: all 0.4s ease;
+        }
+
+        .response-item:hover::after {
+            right: -12px;
+            opacity: 0.3;
+        }
+
+        /* 保持其他所有代码完全不变 */
         :root {
             --primary: #6C9EFF;
             --secondary: #FF8B8B;
@@ -80,7 +108,14 @@
             margin-top: 2rem;
         }
 
-        /* 其余所有样式保持完全一致 */
+        .response-item div {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #333;
+            font-weight: 500;
+        }
+
+        /* 其他所有样式保持完全一致 */
         .header::before {
             content: "";
             position: absolute;
@@ -146,19 +181,10 @@
             color: #FFA1A1;
             font-style: italic;
         }
-
-        .response-item::before {
-            content: "✨";
-            position: absolute;
-            left: -30px;
-            top: 50%;
-            transform: translateY(-50%);
-            opacity: 0.3;
-        }
     </style>
 </head>
 <body>
-    <!-- 严格保持原有HTML结构 -->
+    <!-- 保持原有HTML结构 -->
     <div class="header">
         <h1>客服小助手</h1>
     </div>
