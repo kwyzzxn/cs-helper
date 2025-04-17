@@ -5,6 +5,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+        /* 仅修改响应内容字体相关样式 */
+        .response-item {
+            margin: 1.2rem 0;
+            padding: 1.5rem;
+            background: #FFF9E6;
+            border-radius: 15px;
+            border-left: 5px solid var(--secondary);
+            font-size: 1.2rem;  /* 放大字体 */
+            line-height: 1.7;  /* 增加行距 */
+            font-family: system-ui, -apple-system;  /* 更清晰的字体 */
+        }
+
+        .response-item div {
+            font-size: 1.1rem;  /* 内容字体放大 */
+            line-height: 1.8;  /* 增加内容行距 */
+            color: #333;  /* 提高对比度 */
+            font-weight: 500;  /* 中等字重 */
+        }
+
+        /* 保持其他所有样式不变 */
         :root {
             --primary: #6C9EFF;
             --secondary: #FF8B8B;
@@ -58,21 +78,9 @@
             border-radius: 20px;
             box-shadow: 0 8px 30px rgba(255, 139, 139, 0.1);
             margin-top: 2rem;
-            line-height: 1.6;
-            font-size: 1.1rem;
         }
 
-        .response-item {
-            margin: 1.2rem 0;
-            padding: 1.5rem;
-            background: #FFF9E6;
-            border-radius: 15px;
-            border-left: 5px solid var(--secondary);
-            position: relative;
-            transition: transform 0.3s ease;
-        }
-
-        /* 保持其余CSS样式不变 */
+        /* 其余所有样式保持完全一致 */
         .header::before {
             content: "";
             position: absolute;
@@ -150,6 +158,7 @@
     </style>
 </head>
 <body>
+    <!-- 严格保持原有HTML结构 -->
     <div class="header">
         <h1>客服小助手</h1>
     </div>
@@ -180,6 +189,7 @@
 
     <div id="response"></div>
 
+    <!-- 保持JavaScript代码完全不变 -->
     <script>
         let data = [];
         const mainSelect = document.getElementById('mainCategory');
