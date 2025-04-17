@@ -18,6 +18,7 @@
             max-width: 600px;
             margin: 2rem auto;
             padding: 0 1rem;
+            box-sizing: border-box; /* 新增 */
         }
 
         #search {
@@ -30,6 +31,7 @@
             color: var(--text);
             box-shadow: var(--neon-glow);
             transition: all 0.3s ease;
+            box-sizing: border-box; /* 修复宽度溢出 */
         }
 
         #search:focus {
@@ -99,6 +101,7 @@
             font-size: 1rem;
             appearance: none;
             box-shadow: var(--neon-glow);
+            box-sizing: border-box; /* 保持控件统一 */
         }
 
         .select-wrapper {
@@ -136,6 +139,12 @@
             transition: transform 0.3s ease;
         }
 
+        .response-item strong {
+            color: var(--primary); /* 增强路径显示 */
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
         .response-item:hover {
             transform: translateX(10px);
         }
@@ -152,7 +161,7 @@
     </style>
 </head>
 <body>
-    <!-- 原有HTML结构保持不变 -->
+    <!-- 保持原始HTML结构 -->
     <div class="header">
         <h1>客服小助手</h1>
     </div>
@@ -183,7 +192,7 @@
 
     <div id="response"></div>
 
-    <!-- 原有JavaScript代码保持不变 -->
+    <!-- 保持原始JavaScript不变 -->
     <script>
         // ... 原有JavaScript代码 ...
     </script>
