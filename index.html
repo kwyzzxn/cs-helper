@@ -17,6 +17,7 @@
             max-width: 600px;
             margin: 2rem auto;
             padding: 0 1rem;
+            box-sizing: border-box;
         }
 
         #search {
@@ -28,6 +29,7 @@
             background: rgba(255,255,255,0.9);
             box-shadow: 0 4px 15px rgba(108, 158, 255, 0.1);
             transition: all 0.3s ease;
+            box-sizing: border-box;
         }
 
         body {
@@ -50,6 +52,27 @@
             overflow: hidden;
         }
 
+        #response {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(255, 139, 139, 0.1);
+            margin-top: 2rem;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+
+        .response-item {
+            margin: 1.2rem 0;
+            padding: 1.5rem;
+            background: #FFF9E6;
+            border-radius: 15px;
+            border-left: 5px solid var(--secondary);
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        /* 保持其余CSS样式不变 */
         .header::before {
             content: "";
             position: absolute;
@@ -111,30 +134,6 @@
             font-size: 0.9rem;
         }
 
-        #response {
-            background: white;
-            padding: 2rem;
-            border-radius: 20px;
-            box-shadow: 0 8px 30px rgba(255, 139, 139, 0.1);
-            margin-top: 2rem;
-            line-height: 1.7;
-            font-size: 1.05rem;
-        }
-
-        .response-item {
-            margin: 1.2rem 0;
-            padding: 1.5rem;
-            background: #FFF9E6;
-            border-radius: 15px;
-            border-left: 5px solid var(--secondary);
-            position: relative;
-            transition: transform 0.3s ease;
-        }
-
-        .response-item:hover {
-            transform: translateX(10px);
-        }
-
         #search::placeholder {
             color: #FFA1A1;
             font-style: italic;
@@ -151,7 +150,6 @@
     </style>
 </head>
 <body>
-    <!-- 原有HTML结构保持不变 -->
     <div class="header">
         <h1>客服小助手</h1>
     </div>
@@ -183,7 +181,6 @@
     <div id="response"></div>
 
     <script>
-        // 保持原有JavaScript代码不变
         let data = [];
         const mainSelect = document.getElementById('mainCategory');
         const subSelect = document.getElementById('subCategory');
