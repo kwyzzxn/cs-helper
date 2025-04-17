@@ -4,169 +4,106 @@
     <title>客服小助手</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #5ce1e6;  /* 柔化主色值 */
-            --secondary: #7d53f6;
-            --accent: #ff3bff;
-            --text: rgba(224, 224, 224, 0.9);
-            --background: linear-gradient(162deg, #0a0a2e 30%, #1a1a4a 100%);
+            --primary: #4a90e2;
+            --secondary: #6c5ce7;
+            --accent: #00c2a2;
+            --text: #2d3436;
+            --background: linear-gradient(135deg, #f8f9fa 0%, #e0ebff 100%);
         }
 
-        body {
-            font-family: 'Orbitron', sans-serif;
-            padding: 2rem;
-            min-height: 100vh;
-            max-width: 800px;
-            margin: 0 auto;
-            background: var(--background);
-            color: var(--text);
-        }
-
-        .header {
-            background: linear-gradient(135deg, 
-                rgba(125, 83, 246, 0.9) 0%, 
-                rgba(92, 225, 230, 0.7) 100%);
-            padding: 1.5rem;
-            border-radius: 12px;
-            margin: -1rem -1rem 2rem;
-            box-shadow: 0 4px 24px rgba(92, 225, 230, 0.15);
-            position: relative;
-        }
-
-        .header h1 {
-            color: rgba(255, 255, 255, 0.95);
-            margin: 0;
-            font-weight: 500;
-            text-align: center;
-            letter-spacing: 1px;
-            font-size: 2.5rem;
-            text-shadow: 0 0 18px rgba(92, 225, 230, 0.4);
-        }
-
-        /* 搜索框样式 */
         .search-container {
             max-width: 600px;
-            margin: 2.5rem auto;
+            margin: 2rem auto;
             padding: 0 1rem;
         }
 
         #search {
             width: 100%;
-            padding: 1rem 1.8rem;
-            border: 1.5px solid rgba(92, 225, 230, 0.4);
-            border-radius: 10px;
+            padding: 1rem 1.5rem;
+            border: 2px solid var(--primary);
+            border-radius: 12px;
             font-size: 1rem;
-            background: rgba(0, 0, 0, 0.25);
-            color: var(--text);
-            transition: all 0.2s ease;
+            background: white;
+            box-sizing: border-box;
         }
 
-        #search:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 20px rgba(92, 225, 230, 0.25),
-                        inset 0 0 8px rgba(92, 225, 230, 0.1);
+        body {
+            font-family: 'Segoe UI', system-ui;
+            padding: 2rem;
+            min-height: 100vh;
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--background);
         }
 
-        /* 选择器样式 */
+        .header {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+            padding: 1.5rem 2rem;
+            border-radius: 16px;
+            margin: -1rem -1rem 2rem;
+            box-shadow: 0 4px 20px rgba(74, 144, 226, 0.2);
+        }
+
+        .header h1 {
+            color: white;
+            margin: 0;
+            font-weight: 600;
+            text-align: center;
+            font-size: 2.2rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
         .select-group {
             display: grid;
-            gap: 1.2rem;
-            margin: 2.5rem 0;
+            gap: 1rem;
+            margin: 2rem 0;
             max-width: 600px;
             padding: 0 1rem;
             margin-left: auto;
             margin-right: auto;
         }
 
+        select {
+            width: 100%;
+            padding: 0.8rem 2.5rem 0.8rem 1.2rem;
+            border: 2px solid #e0f0ff;
+            border-radius: 8px;
+            background: white;
+            font-size: 1rem;
+            appearance: none;
+        }
+
         .select-wrapper {
             position: relative;
         }
 
-        select {
-            width: 100%;
-            padding: 1rem 1.5rem;
-            border: 1.5px solid rgba(92, 225, 230, 0.4);
-            border-radius: 8px;
-            background: rgba(0, 0, 0, 0.25);
-            color: var(--text);
-            font-size: 1rem;
-            appearance: none;
-            transition: all 0.2s ease;
-        }
-
-        select:hover {
-            border-color: var(--primary);
-            box-shadow: 0 0 15px rgba(92, 225, 230, 0.2);
-        }
-
         .select-wrapper::after {
-            content: "▼";
+            content: "⌄";
             position: absolute;
-            right: 1.5rem;
+            right: 1rem;
             top: 50%;
             transform: translateY(-50%);
             color: var(--primary);
-            font-size: 0.7rem;
-            opacity: 0.7;
+            font-size: 1.2rem;
         }
 
-        /* 结果展示区 */
         #response {
-            background: rgba(0, 0, 0, 0.2);
-            padding: 1.8rem;
-            border-radius: 10px;
-            border: 1px solid rgba(92, 225, 230, 0.3);
-            margin-top: 2.5rem;
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+            margin-top: 2rem;
             line-height: 1.7;
         }
 
         .response-item {
-            margin: 1.2rem 0;
+            margin: 1rem 0;
             padding: 1.2rem;
-            background: linear-gradient(
-                90deg,
-                rgba(0,0,0,0) 0%,
-                rgba(92, 225, 230, 0.08) 50%,
-                rgba(0,0,0,0) 100%
-            );
-            border-left: 3px solid var(--accent);
-            position: relative;
-            transition: all 0.2s ease;
-        }
-
-        .response-item:hover {
-            transform: translateX(8px);
-            background: linear-gradient(
-                90deg,
-                rgba(0,0,0,0) 0%,
-                rgba(92, 225, 230, 0.12) 50%,
-                rgba(0,0,0,0) 100%
-            );
-        }
-
-        /* 光效动画 */
-        @keyframes scanline {
-            0% { transform: translateY(-100%); }
-            100% { transform: translateY(100%); }
-        }
-
-        .header::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(
-                90deg,
-                rgba(92, 225, 230, 0) 0%,
-                rgba(92, 225, 230, 0.4) 50%,
-                rgba(92, 225, 230, 0) 100%
-            );
-            animation: scanline 2s linear infinite;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent);
         }
     </style>
 </head>
@@ -202,8 +139,112 @@
     <div id="response"></div>
 
     <script>
-        /* 保留原功能逻辑 */
-        // ...（保持原有JavaScript代码不变）...
+        let data = [];
+        const mainSelect = document.getElementById('mainCategory');
+        const subSelect = document.getElementById('subCategory');
+        const subSubSelect = document.getElementById('subSubCategory');
+        const responseDiv = document.getElementById('response');
+
+        const initSelect = (selectElement, items, placeholder) => {
+            selectElement.innerHTML = `<option value="">${placeholder}</option>`;
+            items.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.name || item;
+                option.textContent = item.name || item;
+                selectElement.appendChild(option);
+            });
+        };
+
+        const showResponse = (content) => {
+            if (Array.isArray(content)) {
+                responseDiv.innerHTML = content.map(item => 
+                    `<div class="response-item">${item}</div>`
+                ).join('');
+            } else {
+                responseDiv.innerHTML = `<div class="response-item">${content}</div>`;
+            }
+        };
+
+        mainSelect.addEventListener('change', () => {
+            const category = data.find(c => c.category === mainSelect.value);
+            initSelect(subSelect, category?.subCategories || [], '请选择子分类');
+            subSubSelect.innerHTML = '<option value="">请选择平台</option>';
+            responseDiv.innerHTML = '';
+        });
+
+        subSelect.addEventListener('change', () => {
+            const category = data.find(c => c.category === mainSelect.value);
+            const subCategory = category?.subCategories.find(s => s.name === subSelect.value);
+            
+            if (subCategory?.subCategories) {
+                initSelect(subSubSelect, subCategory.subCategories, '请选择平台');
+            } else {
+                subSubSelect.innerHTML = '<option value="">请选择平台</option>';
+                if (subCategory?.response) showResponse(subCategory.response);
+            }
+        });
+
+        subSubSelect.addEventListener('change', () => {
+            const category = data.find(c => c.category === mainSelect.value);
+            const subCategory = category?.subCategories.find(s => s.name === subSelect.value);
+            const platform = subCategory?.subCategories?.find(p => p.name === subSubSelect.value);
+            
+            if (platform?.response) showResponse(platform.response);
+        });
+
+        document.getElementById('search').addEventListener('input', (e) => {
+            const keyword = e.target.value.toLowerCase();
+            responseDiv.innerHTML = '';
+            if (!keyword) return;
+
+            const searchResults = [];
+            data.forEach(category => {
+                category.subCategories.forEach(sub => {
+                    (sub.subCategories || [sub]).forEach(item => {
+                        const contents = Array.isArray(item.response) ? item.response : [item.response];
+                        const pathParts = [
+                            category.category.toLowerCase(),
+                            sub.name.toLowerCase(),
+                            item.name ? item.name.toLowerCase() : ''
+                        ];
+
+                        const hasMatch = contents.some(content => content.toLowerCase().includes(keyword)) ||
+                                       pathParts.some(part => part.includes(keyword));
+
+                        if (hasMatch) {
+                            contents.forEach(content => {
+                                searchResults.push({
+                                    path: `${category.category} → ${sub.name}${item.name ? ' → ' + item.name : ''}`,
+                                    content: content
+                                });
+                            });
+                        }
+                    });
+                });
+            });
+
+            if (searchResults.length > 0) {
+                responseDiv.innerHTML = searchResults.map(result => 
+                    `<div class="response-item">
+                        <strong>${result.path}</strong>
+                        <div>${result.content}</div>
+                    </div>`
+                ).join('');
+            } else {
+                responseDiv.innerHTML = '<div class="response-item">🔍 未找到相关话术</div>';
+            }
+        });
+
+        (async () => {
+            try {
+                const response = await fetch('data.json');
+                data = await response.json();
+                initSelect(mainSelect, data.map(c => c.category), '请选择主分类');
+            } catch (error) {
+                console.error('加载失败:', error);
+                alert('数据加载失败，请检查JSON文件');
+            }
+        })();
     </script>
 </body>
 </html>
