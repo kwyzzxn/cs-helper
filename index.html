@@ -5,7 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* 仅修改响应框动效和装饰 */
+        /* 仅优化响应内容字体 */
+        .response-item div {
+            font-size: 1.25rem;  /* 增大字号 */
+            line-height: 1.7;    /* 增加行距 */
+            color: #2D2D2D;      /* 加深文字颜色 */
+            font-weight: 600;    /* 适当加粗 */
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui; /* 更清晰字体 */
+        }
+
+        /* 保持其他所有代码完全不变 */
         .response-item {
             margin: 1.2rem 0;
             padding: 1.5rem;
@@ -52,7 +61,6 @@
             opacity: 0.3;
         }
 
-        /* 保持其他所有代码完全不变 */
         :root {
             --primary: #6C9EFF;
             --secondary: #FF8B8B;
@@ -108,14 +116,6 @@
             margin-top: 2rem;
         }
 
-        .response-item div {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            color: #333;
-            font-weight: 500;
-        }
-
-        /* 其他所有样式保持完全一致 */
         .header::before {
             content: "";
             position: absolute;
@@ -184,7 +184,6 @@
     </style>
 </head>
 <body>
-    <!-- 保持原有HTML结构 -->
     <div class="header">
         <h1>客服小助手</h1>
     </div>
@@ -215,7 +214,6 @@
 
     <div id="response"></div>
 
-    <!-- 保持JavaScript代码完全不变 -->
     <script>
         let data = [];
         const mainSelect = document.getElementById('mainCategory');
@@ -304,25 +302,4 @@
             if (searchResults.length > 0) {
                 responseDiv.innerHTML = searchResults.map(result => 
                     `<div class="response-item">
-                        <strong>${result.path}</strong>
-                        <div>${result.content}</div>
-                    </div>`
-                ).join('');
-            } else {
-                responseDiv.innerHTML = '<div class="response-item">🔍 未找到相关话术</div>';
-            }
-        });
-
-        (async () => {
-            try {
-                const response = await fetch('data.json');
-                data = await response.json();
-                initSelect(mainSelect, data.map(c => c.category), '请选择主分类');
-            } catch (error) {
-                console.error('加载失败:', error);
-                alert('数据加载失败，请检查JSON文件');
-            }
-        })();
-    </script>
-</body>
-</html>
+                        <strong>${result.path
