@@ -5,7 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* 仅修改响应框动效和装饰 */
+        /* 仅修改响应内容字体 */
+        .response-item div {
+            font-size: 1.2rem;          /* 增大字号 */
+            line-height: 1.7;           /* 优化行距 */
+            color: #222;                /* 加深文字颜色 */
+            font-family: "Microsoft YaHei", sans-serif;  /* 指定优先使用微软雅黑 */
+            font-weight: 500;           /* 中等字重 */
+        }
+
+        /* 保持其他所有代码完全不变 */
         .response-item {
             margin: 1.2rem 0;
             padding: 1.5rem;
@@ -47,12 +56,7 @@
             transition: all 0.4s ease;
         }
 
-        .response-item:hover::after {
-            right: -12px;
-            opacity: 0.3;
-        }
-
-        /* 保持其他所有代码完全不变 */
+        /* 其余所有代码保持完全一致 */
         :root {
             --primary: #6C9EFF;
             --secondary: #FF8B8B;
@@ -108,14 +112,6 @@
             margin-top: 2rem;
         }
 
-        .response-item div {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            color: #333;
-            font-weight: 500;
-        }
-
-        /* 其他所有样式保持完全一致 */
         .header::before {
             content: "";
             position: absolute;
@@ -181,10 +177,14 @@
             color: #FFA1A1;
             font-style: italic;
         }
+
+        .response-item:hover::after {
+            right: -12px;
+            opacity: 0.3;
+        }
     </style>
 </head>
 <body>
-    <!-- 保持原有HTML结构 -->
     <div class="header">
         <h1>客服小助手</h1>
     </div>
@@ -215,7 +215,6 @@
 
     <div id="response"></div>
 
-    <!-- 保持JavaScript代码完全不变 -->
     <script>
         let data = [];
         const mainSelect = document.getElementById('mainCategory');
